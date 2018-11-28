@@ -43,7 +43,7 @@ public class EnemyStatus : MonoBehaviour {
         var _ragdoll = Instantiate(ragdoll, hitPos, hitRot);
         var _ragRigidBody = _ragdoll.GetComponent<Rigidbody>();
         _ragRigidBody.mass = 0.5f;
-        _ragRigidBody.AddForce(Vector3.up * 1000f);
+        _ragRigidBody.AddForce(-Vector3.forward * 10f);
         Destroy(gameObject);
     }
 

@@ -41,9 +41,10 @@ public class PlrCtrl : MonoBehaviour {
     
     // Update is called once per frame
     void Update() {
-        PlayerMovement();
 
-        //CameraShaker.Instance.ShakeOnce(4f, 2f, .1f, 1);
+        
+        PlayerMovement();
+        
     }
 
     void PlayerMovement()
@@ -69,7 +70,7 @@ public class PlrCtrl : MonoBehaviour {
      
         //Slower speed when straffing
         if (movementX != 0 && movementY != 0)
-            movementY *= 0.41f;
+            movementY *= 0.6f;
         
         
         Vector3 movement = new Vector3(movementX * 0.8f, 0, movementY);

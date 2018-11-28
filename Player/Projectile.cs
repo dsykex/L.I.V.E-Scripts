@@ -15,8 +15,7 @@ public class Projectile : MonoBehaviour {
     public GameObject owner;
     private Rigidbody rb;
 
-    int hitCount = 0;
-    public GameObject ragdoll;
+   
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody>();
@@ -28,12 +27,13 @@ public class Projectile : MonoBehaviour {
         Transform hit = other.transform;
         
 
-        if(hit.name == "Enemy")
+        if(hit.tag == "Enemy")
         {
-            var enemyStatus = hit.transform.GetComponent<EnemyStatus>();
+            var enemyStatus = hit.GetComponent<EnemyStatus>();
             enemyStatus.TakeDamage(damage, owner);
         }
 
+        Destroy(gameObject);
         
     }
     // Update is called once per frame
