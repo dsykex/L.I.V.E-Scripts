@@ -10,10 +10,12 @@ public class EnemyStatus : MonoBehaviour {
     private GameManager gameMgr;
     private Animator anim;
     public GameObject ragdoll;
+    private Rigidbody rb;
 	// Use this for initialization
 	void Start () {
         gameMgr = GameObject.Find("GameManager").GetComponent<GameManager>();
         anim = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
         isDead = false;
 	}
 
@@ -39,17 +41,19 @@ public class EnemyStatus : MonoBehaviour {
     {
         Vector3 hitPos = transform.position;
         Quaternion hitRot = transform.rotation;
+            anim.enabled = false;
        
-        var _ragdoll = Instantiate(ragdoll, hitPos, hitRot);
-        var _ragRigidBody = _ragdoll.GetComponent<Rigidbody>();
-        _ragRigidBody.mass = 0.5f;
-        _ragRigidBody.AddForce(-Vector3.forward * 10f);
-        Destroy(gameObject);
+
+        foreach (ActivateRagdoll ar in GetComponentsInChildren<ActivateRagdoll>())
+            ar.Activate();
+
+        Destroy(gameObject, 3f);
     }
 
 
     // Update is called once per frame
-    void Update () {
+    void Update ()
+    {
 		if(health <= 0)
         {
             health = 0;

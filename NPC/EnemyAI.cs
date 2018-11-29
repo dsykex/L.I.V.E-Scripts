@@ -38,78 +38,90 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        foreach (string tag in TargetList)
+        if (!status.isDead)
         {
-            GameObject[] targetList = GameObject.FindGameObjectsWithTag(tag);
-            foreach (GameObject enemy in targetList)
+            foreach (string tag in TargetList)
             {
-                if (enemy != null)
+                GameObject[] targetList = GameObject.FindGameObjectsWithTag(tag);
+                foreach (GameObject enemy in targetList)
                 {
-
-                    float enemyDistance = Vector3.Distance(transform.position, enemy.transform.position);
-                    if (target == null)
+                    if (enemy != null)
                     {
-                        if (enemyDistance <= 100f)
+
+                        float enemyDistance = Vector3.Distance(transform.position, enemy.transform.position);
+                        if (target == null)
                         {
-                            target = enemy;
+                            if (enemyDistance <= 100f)
+                            {
+                                target = enemy;
+                            }
                         }
+                        else
+                        {
+                            float targetDistance = Vector3.Distance(transform.position, target.transform.position);
+                            if (enemyDistance < targetDistance)
+                                target = enemy;
+
+                            if (targetDistance > 100f)
+                                target = null;
+                        }
+
+                    }
+                    else
+                        target = null;
+                }
+
+                if (target != null)
+                {
+                    if (target.GetComponent<PlrStatus>() != null)
+                        if (target.GetComponent<PlrStatus>().isDead == true)
+                            target = null;
+                }
+
+
+                if (target != null)
+                {
+                    Debug.Log(CalcMagnitude(gameObject, target));
+                    if (CalcMagnitude(gameObject, target) > attackDistance)
+                    {
+                        anim.SetBool("isChasing", true);
+                        anim.SetBool("isAttacking", false);
+
+                       
+                        agent.speed = movementSpeed;
+
+                        agent.destination = target.transform.position;
+
+
                     }
                     else
                     {
-                        float targetDistance = Vector3.Distance(transform.position, target.transform.position);
-                        if (enemyDistance < targetDistance)
-                            target = enemy;
-
-                        if (targetDistance > 100f)
-                            target = null;
+                        anim.SetBool("isAttacking", true);
+                        anim.SetBool("isChasing", false);
                     }
-
                 }
                 else
-                    target = null;
-            }
-
-            if (target != null)
-            {
-                if (target.GetComponent<PlrStatus>() != null)
-                    if (target.GetComponent<PlrStatus>().isDead == true)
-                        target = null;
-            }
-
-
-            if (target != null)
-            {
-                Debug.Log(CalcMagnitude(gameObject, target));
-                if (CalcMagnitude(gameObject, target) > attackDistance)
                 {
-                    anim.SetBool("isChasing", true);
+                    anim.SetBool("isIdle", true);
                     anim.SetBool("isAttacking", false);
-
-                    transform.rotation = Quaternion.LookRotation(target.transform.position - transform.position);
-                        
-                    agent.speed = movementSpeed;
-
-                    agent.destination = target.transform.position;
-
-                        
-                }
-                else
-                {
-                    anim.SetBool("isAttacking", true);
                     anim.SetBool("isChasing", false);
+                    agent.enabled = false;
                 }
-            }
-            else
-            {
-                anim.SetBool("isIdle", true);
-                anim.SetBool("isAttacking", false);
-                anim.SetBool("isChasing", false);
-                agent.enabled = false;
-            }
 
+            }
+        }else
+        {
+            agent.Stop();
+            rb.Sleep();
+
+            foreach (CharacterJoint joint in GetComponentsInChildren<CharacterJoint>())
+                joint.enableProjection = true;
+
+            anim.SetBool("isDead", true);
+            anim.SetBool("isIdle", false);
+            anim.SetBool("isAttacking", false);
+            anim.SetBool("isChasing", false);
         }
-        
         
     }
 
